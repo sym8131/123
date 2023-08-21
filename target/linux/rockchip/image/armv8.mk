@@ -24,6 +24,15 @@ define Device/friendlyarm_nanopc-t4
 endef
 TARGET_DEVICES += friendlyarm_nanopc-t4
 
+define Device/aio-3399b
+  DEVICE_VENDOR := AllInOne
+  DEVICE_MODEL := AIO-3399B
+  SOC := rk3399
+  IMAGE/sysupgrade.img.gz := boot-common | boot-script | pine64-img | gzip | append-metadata
+  DEVICE_PACKAGES := kmod-brcmfmac brcmfmac-nvram-4356-sdio cypress-firmware-4356-sdio
+endef
+TARGET_DEVICES += aio-3399b
+
 define Device/friendlyarm_nanopi-r2c
   DEVICE_VENDOR := FriendlyARM
   DEVICE_MODEL := NanoPi R2C

@@ -81,6 +81,13 @@ define U-Boot/nanopc-t4-rk3399
     friendlyarm_nanopc-t4
 endef
 
+define U-Boot/aio-3399b-rk3399
+  $(U-Boot/rk3399/Default)
+  NAME:=AIO-3399B
+  BUILD_DEVICES:= \
+    aio-3399b
+endef
+
 define U-Boot/nanopi-r4s-rk3399
   $(U-Boot/rk3399/Default)
   NAME:=NanoPi R4S
@@ -104,6 +111,7 @@ endef
 
 UBOOT_TARGETS := \
   nanopc-t4-rk3399 \
+  aio-3399b-rk3399\
   nanopi-r4s-rk3399 \
   rock-pi-4-rk3399 \
   rockpro64-rk3399 \
