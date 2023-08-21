@@ -29,7 +29,7 @@ define Device/aio-3399b
   DEVICE_MODEL := AIO-3399B
   SOC := rk3399
   IMAGE/sysupgrade.img.gz := boot-common | boot-script | pine64-img | gzip | append-metadata
-  DEVICE_PACKAGES := kmod-brcmfmac brcmfmac-nvram-4356-sdio cypress-firmware-4356-sdio
+  DEVICE_PACKAGES := kmod-brcmfmac brcmfmac-nvram-4356-sdio cypress-firmware-4356-sdio swconfig kmod-ata-ahci kmod-nvme  aio-3399b-firmware kmod-switch-rtl8367b wpad-openssl
 endef
 TARGET_DEVICES += aio-3399b
 
