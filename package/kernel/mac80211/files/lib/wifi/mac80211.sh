@@ -152,7 +152,7 @@ detect_mac80211() {
 	config_foreach check_devidx wifi-device
 
 	json_load_file /etc/board.json
-
+	modelname="$(cat /tmp/sysinfo/model 2>/dev/null)"
 	for _dev in /sys/class/ieee80211/*; do
 		[ -e "$_dev" ] || continue
 
@@ -203,13 +203,13 @@ detect_mac80211() {
 			set wireless.${name}.channel=${channel}
 			set wireless.${name}.band=${mode_band}
 			set wireless.${name}.htmode=$htmode
-			set wireless.${name}.disabled=1
+			set wireless.${name}.disabled=0
 
 			set wireless.default_${name}=wifi-iface
 			set wireless.default_${name}.device=${name}
 			set wireless.default_${name}.network=lan
 			set wireless.default_${name}.mode=ap
-			set wireless.default_${name}.ssid=OpenWrt
+			set wireless.default_${name}.ssid=${modelname:-OpenWrt}
 			set wireless.default_${name}.encryption=none
 EOF
 		uci -q commit wireless
