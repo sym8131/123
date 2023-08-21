@@ -4,6 +4,7 @@
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
 #
+export FORCE_UNSAFE_CONFIGURE=1
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tar
