@@ -881,7 +881,7 @@
 	status = "okay";
 
 	brcmf: wifi@1 {
-		compatible = "brcm,bcm43752-fmac";
+		compatible = "brcm,bcm43752-fmac","brcm,bcm4359-fmac","marvell,sd8897";
 		reg = <1>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&wifi_host_wake_l>;
