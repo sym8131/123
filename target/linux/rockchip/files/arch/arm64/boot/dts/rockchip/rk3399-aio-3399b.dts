@@ -227,6 +227,58 @@
 	};
 };
 
+&cpu_thermal {
+		trips {
+				cpu_cool: cpu_cool {
+						temperature = <38000>;
+						hysteresis = <2000>;
+						type = "active";
+				};
+				cpu_normal: cpu_normal {
+						temperature = <43000>;
+						hysteresis = <2000>;
+						type = "active";
+				};
+				cpu_warm: cpu_warm {
+						temperature = <46000>;
+						hysteresis = <2000>;
+						type = "active";
+				};
+				cpu_hot: cpu_hot {
+						temperature = <48000>;
+						hysteresis = <2000>;
+						type = "active";
+				};
+				cpu_max: cpu_max {
+						temperature = <50000>;
+						hysteresis = <2000>;
+						type = "active";
+				};
+		};
+		cooling-maps {
+				map2 {
+						trip = <&cpu_cool>;
+						cooling-device = <&fan 0 1>;
+				};
+				map3 {
+						trip = <&cpu_normal>;
+						cooling-device = <&fan 1 2>;
+				};
+				map4 {
+						trip = <&cpu_warm>;
+						cooling-device = <&fan 2 3>;
+				};
+				map5 {
+						trip = <&cpu_hot>;
+						cooling-device = <&fan 3 4>;
+				};
+				map5 {
+						trip = <&cpu_max>;
+						cooling-device = <&fan 4 5>;
+				};
+		};
+};
+
 &cpu_b0 {
 	cpu-supply = <&vdd_cpu_b>;
 };
