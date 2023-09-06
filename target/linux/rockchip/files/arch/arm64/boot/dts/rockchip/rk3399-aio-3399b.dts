@@ -272,7 +272,7 @@
 						trip = <&cpu_hot>;
 						cooling-device = <&fan 3 4>;
 				};
-				map5 {
+				map6 {
 						trip = <&cpu_max>;
 						cooling-device = <&fan 4 5>;
 				};
