@@ -8,6 +8,8 @@ include $(INCLUDE_DIR)/kernel.mk
 PKG_VERSION:=2021.07
 PKG_RELEASE:=5
 
+PKG_RELEASE:=$(AUTORELEASE)
+
 PKG_HASH:=312b7eeae44581d1362c3a3f02c28d806647756c82ba8c72241c7cdbe68ba77e
 
 PKG_MAINTAINER:=Tobias Maedel <openwrt@tbspace.de>
@@ -96,7 +98,11 @@ define U-Boot/nanopc-t4-rk3399
 endef
 
 define U-Boot/aio-3399b-rk3399
-  $(U-Boot/rk3399/Default)
+  BUILD_SUBTARGET:=armv8
+  DEPENDS:=+PACKAGE_u-boot-$(1):arm-trusted-firmware-rk3399
+  PKG_BUILD_DEPENDS:=arm-trusted-firmware-rockchip-vendor
+  ATF:=rk3399_bl31_v1.36.elf
+  USE_RKBIN:=1
   NAME:=AIO-3399B
   BUILD_DEVICES:= \
     aio-3399b
@@ -140,7 +146,18 @@ UBOOT_TARGETS := \
 UBOOT_CONFIGURE_VARS += USE_PRIVATE_LIBGCC=yes
 
 UBOOT_MAKE_FLAGS += \
+  PATH=$(STAGING_DIR_HOST)/bin:$(PATH) \
   BL31=$(STAGING_DIR_IMAGE)/$(ATF)
+
+ifeq ($(CONFIG_PACKAGE_arm-trusted-firmware-rk3568),y)
+UBOOT_MAKE_FLAGS += \
+  ROCKCHIP_TPL=$(STAGING_DIR_IMAGE)/$(DDR)
+endif
+
+ifeq ($(CONFIG_PACKAGE_arm-trusted-firmware-rk3566),y)
+UBOOT_MAKE_FLAGS += \
+  ROCKCHIP_TPL=$(STAGING_DIR_IMAGE)/$(DDR)
+endif
 
 define Build/Configure
 	$(call Build/Configure/U-Boot)
@@ -153,14 +170,21 @@ ifneq ($(OF_PLATDATA),)
 	$(CP) $(PKG_BUILD_DIR)/of-platdata/$(OF_PLATDATA)/dt-structs-gen.h $(PKG_BUILD_DIR)/include/generated/dt-structs-gen.h
 	$(CP) $(PKG_BUILD_DIR)/of-platdata/$(OF_PLATDATA)/dt-decl.h $(PKG_BUILD_DIR)/include/generated/dt-decl.h
 endif
-
+ifeq ($(USE_RKBIN),1)
+	$(SED) 's#CONFIG_IDENT_STRING=.*#CONFIG_IDENT_STRING="OpenWrt"#g' $(PKG_BUILD_DIR)/.config
+endif
 	$(SED) 's#CONFIG_MKIMAGE_DTC_PATH=.*#CONFIG_MKIMAGE_DTC_PATH="$(PKG_BUILD_DIR)/scripts/dtc/dtc"#g' $(PKG_BUILD_DIR)/.config
 endef
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(STAGING_DIR_IMAGE)
+ifeq ($(USE_RKBIN),1)
+	$(STAGING_DIR_IMAGE)/loaderimage --pack --uboot $(PKG_BUILD_DIR)/u-boot-dtb.bin $(PKG_BUILD_DIR)/uboot.img 0x200000
+	$(CP) $(PKG_BUILD_DIR)/uboot.img $(STAGING_DIR_IMAGE)/$(BUILD_VARIANT)-uboot.img
+else
 	$(CP) $(PKG_BUILD_DIR)/idbloader.img $(STAGING_DIR_IMAGE)/$(BUILD_VARIANT)-idbloader.img
 	$(CP) $(PKG_BUILD_DIR)/u-boot.itb $(STAGING_DIR_IMAGE)/$(BUILD_VARIANT)-u-boot.itb
+endif
 endef
 
 define Package/u-boot/install/default
