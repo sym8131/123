@@ -59,7 +59,10 @@ rockchip_setup_macs()
 		lan_mac=$(macaddr_add "$wan_mac" 1)
 		;;
 	aio,aio-3399b)
-		wan_mac=$(macaddr_generate_from_mmc_cid mmcblk0)
+	[ -d /sys/class/block/mmcblk0/mmcblk0boot0 ]&&mmcnb=mmcblk0
+	[ -d /sys/class/block/mmcblk1/mmcblk1boot0 ]&&mmcnb=mmcblk1
+	[ -d /sys/class/block/mmcblk2/mmcblk2boot0 ]&&mmcnb=mmcblk2
+		wan_mac=$(macaddr_generate_from_mmc_cid $mmcnb)
 		lan_mac=$(macaddr_add "$wan_mac" +1)
 		;;
 	friendlyarm,nanopi-r4s)
