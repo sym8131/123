@@ -46,8 +46,8 @@
 		compatible = "pwm-fan";
 		#cooling-cells = <2>;
 		fan-supply = <&vcc12v_dcin>;
-		pwms = <&pwm0 0 50000 0>;
-		cooling-levels = <0 100 150 200 255>;
+		pwms = <&pwm0 0 10000 0>;
+		cooling-levels = <0 75 100 150 200 255>;
 		status = "okay";
 	};
 
@@ -140,6 +140,20 @@
 		vin-supply = <&vcc5v0_sys>;
 	};
 
+	vcc3v3_ext2: vcc3v3-ext2 {
+		compatible = "regulator-fixed";
+		regulator-always-on;
+		regulator-boot-on;
+		enable-active-high;
+		gpio = <&gpio4 RK_PD3 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&ext_jms561_m2>;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-name = "vcc3v3_ext2";
+		vin-supply = <&vcc5v0_sys>;
+	};
+
 	vcc3v3_sys: vcc3v3-sys {
 		compatible = "regulator-fixed";
 		regulator-always-on;
@@ -219,6 +233,58 @@
 		realtek,extif1 = <1 0 12 1 1 1 1 1 4>;	//rtl8367b_extif_init_of
 		realtek,extif2 = <1 3 1 1 1 1 1 1 2>;
 	};
+};
+
+&cpu_thermal {
+		trips {
+				cpu_cool: cpu_cool {
+						temperature = <38000>;
+						hysteresis = <2000>;
+						type = "active";
+				};
+				cpu_normal: cpu_normal {
+						temperature = <43000>;
+						hysteresis = <2000>;
+						type = "active";
+				};
+				cpu_warm: cpu_warm {
+						temperature = <46000>;
+						hysteresis = <2000>;
+						type = "active";
+				};
+				cpu_hot: cpu_hot {
+						temperature = <48000>;
+						hysteresis = <2000>;
+						type = "active";
+				};
+				cpu_max: cpu_max {
+						temperature = <50000>;
+						hysteresis = <2000>;
+						type = "active";
+				};
+		};
+		cooling-maps {
+				map2 {
+						trip = <&cpu_cool>;
+						cooling-device = <&fan 0 1>;
+				};
+				map3 {
+						trip = <&cpu_normal>;
+						cooling-device = <&fan 1 2>;
+				};
+				map4 {
+						trip = <&cpu_warm>;
+						cooling-device = <&fan 2 3>;
+				};
+				map5 {
+						trip = <&cpu_hot>;
+						cooling-device = <&fan 3 4>;
+				};
+				map6 {
+						trip = <&cpu_max>;
+						cooling-device = <&fan 4 5>;
+				};
+		};
 };
 
 &cpu_b0 {
@@ -647,6 +713,19 @@
 		};
 	};
 
+	power_ext{
+		//ext_pon_switch_wifi: ext-pon-switch-wifi {
+		//	rockchip,pins = <2 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
+		//};
+		ext_jms561_m2: ext-jms561-m2 {
+			rockchip,pins = <4 RK_PD3 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+		jms561_pw: jms561-pw {
+			rockchip,pins = <2 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	
+	};
+
 	leds {
 		user_led1_pin: user-led1-pin {
 			rockchip,pins =
@@ -876,7 +955,7 @@
 	status = "okay";
 
 	brcmf: wifi@1 {
-		compatible = "brcm,bcm43752-fmac";
+		compatible = "brcm,bcm43752-fmac","brcm,bcm4359-fmac","marvell,sd8897";
 		reg = <1>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&wifi_host_wake_l>;
