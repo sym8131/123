@@ -48,7 +48,7 @@
 		fan-supply = <&vcc12v_dcin>;
 		pwms = <&pwm0 0 10000 0>;
 		cooling-levels = <0 75 100 150 200 255>;
-		rockchip,temp-trips = <40000 1 45000 2 50000 3 55000 4 60000 5>;
+		//rockchip,temp-trips = <40000 1 45000 2 50000 3 55000 4 60000 5>;
 		status = "okay";
 	};
 
@@ -141,6 +141,20 @@
 		vin-supply = <&vcc5v0_sys>;
 	};
 
+	vcc3v3_ext2: vcc3v3-ext2 {
+		compatible = "regulator-fixed";
+		regulator-always-on;
+		regulator-boot-on;
+		enable-active-high;
+		gpio = <&gpio4 RK_PD3 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&ext_jms561_m2>;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-name = "vcc3v3_ext2";
+		vin-supply = <&vcc5v0_sys>;
+	};
+
 	vcc3v3_sys: vcc3v3-sys {
 		compatible = "regulator-fixed";
 		regulator-always-on;
@@ -183,6 +197,20 @@
 		regulator-max-microvolt = <3300000>;
 		regulator-name = "vcc3v3_sd";
 		vin-supply = <&vcc3v3_ext>;
+	};
+
+	vcc3v3_jms561: vcc3v3-jms561 {
+		compatible = "regulator-fixed";
+		enable-active-high;
+		gpio = <&gpio2 RK_PA0 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&jms561_pw>;
+		startup-delay-us = <200000>;
+		regulator-always-on;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-name = "vcc3v3_jms561";
+		vin-supply = <&vcc3v3_ext2>;
 	};
 
 	vcc5v0_host: vcc5v0-host-regulator {
@@ -703,6 +731,19 @@
 		ir_int: ir-int {
 			rockchip,pins = <0 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
+	};
+
+	power_ext{
+		//ext_pon_switch_wifi: ext-pon-switch-wifi {
+		//	rockchip,pins = <2 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
+		//};
+		ext_jms561_m2: ext-jms561-m2 {
+			rockchip,pins = <4 RK_PD3 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+		jms561_pw: jms561-pw {
+			rockchip,pins = <2 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	
 	};
 
 	leds {
