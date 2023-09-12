@@ -14,6 +14,9 @@
 		led-failsafe = &user_led2;
 		led-running = &user_led1;
 		led-upgrade = &user_led2;
+		mmc0 = &sdio0;
+		mmc1 = &sdmmc;
+		mmc2 = &sdhci;
 		spi1 = &spi1;
 	};
 
@@ -99,6 +102,7 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&wifi_reg_on_h>;
 		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
+		post-power-on-delay-ms = <300>;
 	};
 
 	/*
@@ -138,6 +142,20 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 		regulator-name = "vcc3v3_ext";
+		vin-supply = <&vcc5v0_sys>;
+	};
+
+	vcc3v3_ext1: vcc3v3-ext1 {
+		compatible = "regulator-fixed";
+		regulator-always-on;
+		regulator-boot-on;
+		enable-active-high;
+		gpio = <&gpio2 RK_PA1 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&ext_pon_switch_wifi>;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-name = "vcc3v3_ext1";
 		vin-supply = <&vcc5v0_sys>;
 	};
 
@@ -734,16 +752,15 @@
 	};
 
 	power_ext{
-		//ext_pon_switch_wifi: ext-pon-switch-wifi {
-		//	rockchip,pins = <2 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
-		//};
+		ext_pon_switch_wifi: ext-pon-switch-wifi {
+			rockchip,pins = <2 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
 		ext_jms561_m2: ext-jms561-m2 {
 			rockchip,pins = <4 RK_PD3 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 		jms561_pw: jms561-pw {
 			rockchip,pins = <2 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
-	
 	};
 
 	leds {
@@ -963,6 +980,7 @@
 	bus-width = <4>;
 	//clock-frequency = <50000000>;
 	cap-sdio-irq;
+	supports-sdio;
 	cap-sd-highspeed;
 	keep-power-in-suspend;
 	mmc-pwrseq = <&sdio_pwrseq>;
@@ -992,8 +1010,8 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&sdmmc_bus4 &sdmmc_clk &sdmmc_cmd &sdmmc0_det_l>;
 	status = "okay";
-	vmmc-supply = <&vcc3v3_sd>;
-	vqmmc-supply = <&vcc_sdio>;
+	//vmmc-supply = <&vcc3v3_sd>;
+	vqmmc-supply = <&vcc3v3_sd>;
 };
 
 &tcphy0 {
