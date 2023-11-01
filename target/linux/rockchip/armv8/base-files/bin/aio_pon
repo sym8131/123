@@ -1,0 +1,35 @@
+#!/bin/sh
+aio_pon_pid="$(cat /var/run/aio_pon.pid 2>/dev/null)"
+get_name="$(cat /proc/$aio_pon_pid/comm 2>/dev/null)"
+[ "$get_name" = "${0##*\/}" ]&&{
+echo "脚本已经执行，请勿重复执行……"
+exit 0
+}
+
+{
+pidof aio_pon >/var/run/aio_pon.pid
+ui=30
+uu=a
+while :
+do
+sleep $ui
+get_device=$(uci -q get network.wan.device)||get_device=$(uci -q get network.wan.ifname)
+get_proto=$(uci -q get network.wan.proto)
+[ "$get_device" = "eth0.2" -a "$get_proto" = "pppoe" ]&&{
+wget -q --spider http://192.168.1.10||{
+sleep 5
+uu=a$uu
+wget -q --spider http://192.168.1.10||{
+sleep 5
+uu=a$uu
+wget -q --spider http://192.168.1.10||uu=a$uu
+}
+}
+[ "$uu" = "aaaa" ]&&{
+/etc/init.d/network restart
+ui=$((ui*5))
+}||ui=80
+uu=a
+}
+done
+} >/dev/null 2>&1 &

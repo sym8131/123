@@ -17,6 +17,8 @@ uci -q set network.pon_route.netmask='255.255.255.0'
 uci -q set network.pon_route.gateway='192.168.1.254'
 uci -q set network.pon_route.metric='100'
 uci -q commit network
+chmod +x /bin/aio_pon
+sed -i '2a\aio_pon' /etc/rc.local
 ;;
 *)
 exit 0
