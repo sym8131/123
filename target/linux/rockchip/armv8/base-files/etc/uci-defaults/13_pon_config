@@ -19,6 +19,7 @@ uci -q set network.pon_route.metric='100'
 uci -q commit network
 chmod +x /bin/aio_pon
 sed -i '2a\aio_pon' /etc/rc.local
+sed -i '/swconfig dev \${shellquote(request.args.switch)} show 2>\/dev\/null/c   const swc = popen\(\`for ii in \$\(seq 0 \$\(swconfig dev \${shellquote\(request.args.switch\)} help|awk '\''{print \$4-1\;exit}'\''\)\)\; do swconfig dev \${shellquote\(request.args.switch\)} port \$ii show 2>\/dev\/null\; done\`\)\;' /usr/share/rpcd/ucode/luci
 ;;
 *)
 exit 0
